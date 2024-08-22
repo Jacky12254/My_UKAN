@@ -117,6 +117,7 @@ def train(modelConfig: Dict):
                 if log_print:
                     print("epoch: ", epoch, "loss: ", loss.item(), "img shape: ", x_0.shape, "LR: ", optimizer.state_dict()['param_groups'][0]["lr"])
                 warmUpScheduler.step()#学习率调度器更新
+                torch.cuda.empty_cache()
         if epoch % 50 ==0:
             torch.save(net_model.state_dict(), os.path.join(
                 modelConfig["save_weight_dir"], 'ckpt_' + str(epoch) + "_.pt"))
