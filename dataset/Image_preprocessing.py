@@ -30,12 +30,13 @@ image_files_sar_VV = [f for f in os.listdir(src_dir_sar_VV) if os.path.isfile(os
 
 for image_file_index in tqdm(range(len(image_files_opt_clear)), desc='Processing images'):#tqdm是一个进度条库，这里是显示进度条
     # Load the image
-    image_file = f'ROIs_41_p_{image_file_index + 3130}.tif'#image_file是一个字符串，存储了图片文件名,假如image_file_index=0,那么image_file='ROIs_41_p_3130'
-
     image_file_opt_clear = image_files_opt_clear[image_file_index]#image_file是一个字符串，存储了图片文件名
     image_file_opt_cloudy = image_files_opt_cloudy[image_file_index]
     image_file_sar_VH = image_files_sar_VH[image_file_index]
     image_file_sar_VV = image_files_sar_VV[image_file_index]
+
+    image_file = image_file_opt_clear.replace('.png', '.tif')
+    #这里是将opt_clear的图片作为基准，所以这里的image_file是opt_clear的图片文件名
 
     image_opt_clear = io.imread(os.path.join(src_dir_opt_clear, image_file_opt_clear))
     image_opt_cloudy = io.imread(os.path.join(src_dir_opt_cloudy, image_file_opt_cloudy))
