@@ -36,7 +36,7 @@ if __name__ == '__main__':
     parser.add_argument('--state', type=str, default='train') # train or eval
     parser.add_argument('--dataset', type=str, default='ROIs') # busi, glas, cvc
     parser.add_argument('--epoch', type=int, default=1000) # 1000 for cvc/glas, 5000 for busi
-    parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--batch_size', type=int, default=16)
     parser.add_argument('--T', type=int, default=1000)
     parser.add_argument('--channel', type=int, default=64) # 64 or 128
     parser.add_argument('--test_load_weight', type=str, default='ckpt_1000_.pt')
