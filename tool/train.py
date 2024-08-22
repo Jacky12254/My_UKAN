@@ -162,6 +162,8 @@ def eval_tmp(modelConfig: Dict, nme: int):#tmp是为了不覆盖原来的eval
         if nme < 0.95 * modelConfig["epoch"]:
             os.remove(os.path.join(
                 modelConfig["save_weight_dir"], modelConfig["test_load_weight"]))
+            
+        torch.cuda.empty_cache()
 
 def eval(modelConfig: Dict):
     # load model and evaluate
