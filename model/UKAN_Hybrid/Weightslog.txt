@@ -1,0 +1,34 @@
+modelConfig: 
+dataset  :  ROIs
+state  :  train
+epoch  :  1000
+batch_size  :  32
+T  :  1000
+channel  :  64
+channel_mult  :  [1, 2, 3, 4]
+attn  :  [2]
+num_res_blocks  :  2
+dropout  :  0.15
+lr  :  0.0002
+multiplier  :  2.0
+beta_1  :  0.0001
+beta_T  :  0.02
+img_size  :  256
+grad_clip  :  1.0
+device  :  cuda
+training_load_weight  :  None
+save_weight_dir  :  ./model/UKAN_Hybrid\Weights
+sampled_dir  :  ./model/UKAN_Hybrid\Gens
+test_load_weight  :  ckpt_1000_.pt
+sampledNoisyImgName  :  NoisyNoGuidenceImgs.png
+sampledImgName  :  ROIs_41_p.png
+nrow  :  8
+model  :  UKAN_Hybrid
+version  :  1
+dataset_repeat  :  1
+seed  :  0
+save_root  :  ./model/
+output_root  :  ./output/
+Using UKAN_Hybrid
+model load weight done.
+Start Sampling
