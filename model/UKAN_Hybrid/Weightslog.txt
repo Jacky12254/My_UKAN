@@ -30,5 +30,3 @@ seed  :  0
 save_root  :  ./model/
 output_root  :  ./output/
 Using UKAN_Hybrid
-model load weight done.
-Start Sampling

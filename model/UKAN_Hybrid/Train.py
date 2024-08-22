@@ -59,7 +59,7 @@ def train(modelConfig: Dict):
         ToTensor(),
         transforms.RandomHorizontalFlip(),#随机水平翻转
         transforms.RandomVerticalFlip(),#随机垂直翻转
-        Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+        Normalize((0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), (0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5))
         ])#归一化，参数为均值和标准差
 
     if modelConfig["dataset"] == 'ROIs':

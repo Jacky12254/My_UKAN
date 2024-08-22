@@ -421,7 +421,7 @@ class UKan_Hybrid(nn.Module):
         tdim = ch * 4#tdim是时间维度的维度
         self.time_embedding = TimeEmbedding(T, ch, tdim)
         attn = []
-        self.head = nn.Conv2d(3, ch, kernel_size=3, stride=1, padding=1)
+        self.head = nn.Conv2d(8, ch, kernel_size=3, stride=1, padding=1)#这里是卷积层，输入通道数是3，输出通道数是ch，卷积核大小是3*3，步长是1，填充是1
 
         self.downblocks = nn.ModuleList()
         chs = [ch]  # record hput channel when dowmsample for upsample
