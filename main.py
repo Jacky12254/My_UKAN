@@ -103,4 +103,6 @@ if __name__ == '__main__':
     shutil.copy("tool/Model_UKAN_Hybrid.py", os.path.join(save_root, args.exp_nme))#这里是为了保存模型的代码
     shutil.copy("tool/train.py", os.path.join(save_root, args.exp_nme))#这里是为了保存训练的代码
 
-    main(modelConfig, 'train')#这里是调用main函数，开始训绿
+    main(modelConfig, 'train')#这里是调用main函数，开始训练
+    module_model = train
+    print('train')

@@ -57,6 +57,7 @@ class GaussianDiffusionTrainer(nn.Module):#这个类是用来训练的
         model_shape = self.model(x_t, t).shape
 
         loss = F.mse_loss(self.model(x_t, t), noise, reduction='none')
+        loss_add = loss.sum()
         return loss
 
 

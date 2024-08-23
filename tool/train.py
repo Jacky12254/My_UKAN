@@ -97,6 +97,7 @@ def train(modelConfig: Dict):
 
     trainer = GaussianDiffusionTrainer(
         net_model, modelConfig["beta_1"], modelConfig["beta_T"], modelConfig["T"]).to(device)
+    
 
     # start training
     for epoch in range(1,modelConfig["epoch"]+1):
@@ -139,7 +140,7 @@ def eval_tmp(modelConfig: Dict, nme: int):#tmp是为了不覆盖原来的eval
     with torch.no_grad():
         device = torch.device(modelConfig["device"])
         model = model_dict[modelConfig["model"]](T=modelConfig["T"], ch=modelConfig["channel"], ch_mult=modelConfig["channel_mult"], attn=modelConfig["attn"],
-                     num_res_blocks=modelConfig["num_res_blocks"], dropout=modelConfig["dropout"]).to(device)
+                           num_res_blocks=modelConfig["num_res_blocks"], dropout=modelConfig["dropout"]).to(device)
         ckpt = torch.load(os.path.join(
             modelConfig["save_weight_dir"], modelConfig["test_load_weight"]), map_location=device, weights_only=True)
     
@@ -197,3 +198,4 @@ def eval(modelConfig: Dict):
         for i, image in enumerate(sampledImgs):
     
             save_image(image, os.path.join(modelConfig["sampled_dir"],  modelConfig["sampledImgName"].replace('.png','_{}.png').format(i)), nrow=modelConfig["nrow"])
+
