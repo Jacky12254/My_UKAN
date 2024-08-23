@@ -1,5 +1,9 @@
 
 import os
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
+
 from typing import Dict
 import torch
 import torch.optim as optim
@@ -59,7 +63,7 @@ def train(modelConfig: Dict):
         ToTensor(),
         transforms.RandomHorizontalFlip(),#随机水平翻转
         transforms.RandomVerticalFlip(),#随机垂直翻转
-        Normalize((0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), (0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5))
+        Normalize((0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), (0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5))#前一个参数是均值，后一个参数是标准差
         ])#归一化，参数为均值和标准差
 
     if modelConfig["dataset"] == 'ROIs':
@@ -78,8 +82,8 @@ def train(modelConfig: Dict):
     print('Using {}'.format(modelConfig["model"]))
     # model setup，这里是模型的初始化
     net_model =model_dict[modelConfig["model"]](T=modelConfig["T"], ch=modelConfig["channel"], ch_mult=modelConfig["channel_mult"], attn=modelConfig["attn"],
-                    num_res_blocks=modelConfig["num_res_blocks"], dropout=modelConfig["dropout"]).to(device)
-
+                    num_res_blocks=modelConfig["num_res_blocks"], dropout=modelConfig["dropout"]).to(device)#这里哪个变量定义了输入图片的通道数？答案是modelConfig["channel"]
+    print(net_model)
     if modelConfig["training_load_weight"] is not None:
         net_model.load_state_dict(torch.load(os.path.join(
             modelConfig["save_weight_dir"], modelConfig["training_load_weight"]), map_location=device))#这里是在训练的时候加载预训练的模型
@@ -97,7 +101,7 @@ def train(modelConfig: Dict):
     # start training
     for epoch in range(1,modelConfig["epoch"]+1):
         with tqdm(dataloader, dynamic_ncols=True) as tqdmDataLoader:
-            for images, labels in tqdmDataLoader:
+            for images, labels in tqdmDataLoader:#这里是遍历数据集，images是图片，labels是标签，images的shape是[batch_size, 3, 64, 64]，image的来源是哪个变量？答案是dataset
                 # train
                 optimizer.zero_grad()#梯度清零
                 x_0 = images.to(device)#将数据放到GPU上
@@ -117,6 +121,7 @@ def train(modelConfig: Dict):
                 if log_print:
                     print("epoch: ", epoch, "loss: ", loss.item(), "img shape: ", x_0.shape, "LR: ", optimizer.state_dict()['param_groups'][0]["lr"])
                 warmUpScheduler.step()#学习率调度器更新
+                torch.cuda.empty_cache()
         if epoch % 50 ==0:
             torch.save(net_model.state_dict(), os.path.join(
                 modelConfig["save_weight_dir"], 'ckpt_' + str(epoch) + "_.pt"))
@@ -161,6 +166,8 @@ def eval_tmp(modelConfig: Dict, nme: int):#tmp是为了不覆盖原来的eval
         if nme < 0.95 * modelConfig["epoch"]:
             os.remove(os.path.join(
                 modelConfig["save_weight_dir"], modelConfig["test_load_weight"]))
+            
+        torch.cuda.empty_cache()
 
 def eval(modelConfig: Dict):
     # load model and evaluate

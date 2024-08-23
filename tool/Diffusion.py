@@ -3,7 +3,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 from tqdm import tqdm
-
+import sys
+import os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
 
 def extract(v, t, x_shape):
     """
@@ -41,9 +44,18 @@ class GaussianDiffusionTrainer(nn.Module):#这个类是用来训练的
         """
         t = torch.randint(self.T, size=(x_0.shape[0], ), device=x_0.device)
         noise = torch.randn_like(x_0)
+
+        noise_shape = noise.shape
+
         x_t = (
             extract(self.sqrt_alphas_bar, t, x_0.shape) * x_0 +
             extract(self.sqrt_one_minus_alphas_bar, t, x_0.shape) * noise)
+        
+        x_t_shape = x_t.shape
+        t_shape = t.shape
+        
+        model_shape = self.model(x_t, t).shape
+
         loss = F.mse_loss(self.model(x_t, t), noise, reduction='none')
         return loss
 

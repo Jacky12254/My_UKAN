@@ -4,6 +4,10 @@ import argparse
 import torch
 import numpy as np
 from tool.img2img import img2img
+import sys
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
 
 def main(model_config = None, state = "train"):
     if state == "train":
@@ -11,7 +15,7 @@ def main(model_config = None, state = "train"):
             modelConfig = model_config
         if modelConfig["state"] == "train":
             train(modelConfig)
-            modelConfig['batch_size'] = 64
+            modelConfig['batch_size'] = 8
             modelConfig['test_load_weight'] = 'ckpt_{}_.pt'.format(modelConfig['epoch'])
             for i in range(32):
                 modelConfig["sampledImgName"] = "sampledImgName{}.png".format(i)
@@ -38,7 +42,7 @@ if __name__ == '__main__':
     parser.add_argument('--epoch', type=int, default=1000) # 1000 for cvc/glas, 5000 for busi
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--T', type=int, default=1000)
-    parser.add_argument('--channel', type=int, default=64) # 64 or 128
+    parser.add_argument('--channel', type=int, default=64) # 64 or 128，这里具体是指通道数，也就是特征图的数量
     parser.add_argument('--test_load_weight', type=str, default='ckpt_1000_.pt')
     parser.add_argument('--num_res_blocks', type=int, default=2)
     parser.add_argument('--dropout', type=float, default=0.15)
@@ -50,7 +54,7 @@ if __name__ == '__main__':
     parser.add_argument('--exp_nme', type=str, default='UKAN_Hybrid')
     parser.add_argument('--save_root', type=str, default='./model/') 
     parser.add_argument('--output_root', type=str, default='./output/')
-    parser.add_argument('--sampledImgName', type=str, default='ROIs_41_p.png')
+    parser.add_argument('--sampledImgName', type=str, default='ROIs_02_p.png')
     args = parser.parse_args()#这个是解析参数的意思
 
     save_root = args.save_root
@@ -64,7 +68,7 @@ if __name__ == '__main__':
         "batch_size": args.batch_size,
         "T": args.T,#T是指迭代的次数
         "channel": args.channel,
-        "channel_mult": [1, 2, 3, 4],
+        "channel_mult": [1, 2, 3, 4, 5, 6, 7, 8],#这个是通道数，这里是一个列表,这里是指通道数的倍数,有8个通道
         "attn": [2],
         "num_res_blocks": args.num_res_blocks,
         "dropout": args.dropout,
@@ -81,7 +85,7 @@ if __name__ == '__main__':
         "test_load_weight": args.test_load_weight,
         "sampledNoisyImgName": "NoisyNoGuidenceImgs.png",
         "sampledImgName": "SampledNoGuidenceImgs.png",
-        "nrow": 8,
+        "nrow": 8,#这个是指每行显示的图片数量
         "model":args.model,
         "version": 1,
         "dataset_repeat": args.dataset_repeat,

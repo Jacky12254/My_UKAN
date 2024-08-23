@@ -2,10 +2,10 @@ modelConfig:
 dataset  :  ROIs
 state  :  train
 epoch  :  1000
-batch_size  :  32
+batch_size  :  8
 T  :  1000
 channel  :  64
-channel_mult  :  [1, 2, 3, 4]
+channel_mult  :  [1, 2, 3, 4, 5, 6, 7, 8]
 attn  :  [2]
 num_res_blocks  :  2
 dropout  :  0.15
@@ -21,7 +21,7 @@ save_weight_dir  :  ./model/UKAN_Hybrid\Weights
 sampled_dir  :  ./model/UKAN_Hybrid\Gens
 test_load_weight  :  ckpt_1000_.pt
 sampledNoisyImgName  :  NoisyNoGuidenceImgs.png
-sampledImgName  :  ROIs_41_p.png
+sampledImgName  :  ROIs_02_p.png
 nrow  :  8
 model  :  UKAN_Hybrid
 version  :  1
@@ -30,3 +30,847 @@ seed  :  0
 save_root  :  ./model/
 output_root  :  ./output/
 Using UKAN_Hybrid
+Backend QtAgg is interactive backend. Turning interactive mode on.
+UKan_Hybrid(
+  (time_embedding): TimeEmbedding(
+    (timembedding): Sequential(
+      (0): Embedding(1000, 64)
+      (1): Linear(in_features=64, out_features=256, bias=True)
+      (2): Swish()
+      (3): Linear(in_features=256, out_features=256, bias=True)
+    )
+  )
+  (head): Conv2d(8, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (downblocks): ModuleList(
+    (0-1): 2 x ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 64, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=64, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 64, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Identity()
+      (attn): Identity()
+    )
+    (2): DownSample(
+      (main): Conv2d(64, 64, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+    )
+    (3): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 64, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=128, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 128, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(64, 128, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (4): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 128, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=128, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 128, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Identity()
+      (attn): Identity()
+    )
+    (5): DownSample(
+      (main): Conv2d(128, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+    )
+    (6): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 128, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(128, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=192, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 192, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(128, 192, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (7): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 192, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=192, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 192, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Identity()
+      (attn): Identity()
+    )
+    (8): DownSample(
+      (main): Conv2d(192, 192, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+    )
+    (9): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 192, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(192, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=256, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 256, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(192, 256, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (10): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 256, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=256, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 256, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Identity()
+      (attn): Identity()
+    )
+    (11): DownSample(
+      (main): Conv2d(256, 256, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+    )
+    (12): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 256, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(256, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=320, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 320, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(256, 320, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (13): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 320, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=320, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 320, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Identity()
+      (attn): Identity()
+    )
+    (14): DownSample(
+      (main): Conv2d(320, 320, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+    )
+    (15): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 320, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(320, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=384, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 384, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(384, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(320, 384, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (16): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 384, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(384, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=384, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 384, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(384, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Identity()
+      (attn): Identity()
+    )
+    (17): DownSample(
+      (main): Conv2d(384, 384, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+    )
+    (18): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 384, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(384, 448, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=448, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 448, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(448, 448, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(384, 448, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (19): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 448, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(448, 448, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=448, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 448, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(448, 448, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Identity()
+      (attn): Identity()
+    )
+    (20): DownSample(
+      (main): Conv2d(448, 448, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+    )
+    (21): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 448, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(448, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=512, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 512, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(448, 512, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (22): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 512, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=512, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 512, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Identity()
+      (attn): Identity()
+    )
+  )
+  (upblocks): ModuleList(
+    (0-1): 2 x ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 1024, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(1024, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=512, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 512, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(1024, 512, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (2): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 960, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(960, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=512, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 512, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(960, 512, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (3): UpSample(
+      (main): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (4): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 960, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(960, 448, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=448, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 448, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(448, 448, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(960, 448, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (5): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 896, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(896, 448, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=448, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 448, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(448, 448, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(896, 448, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (6): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 832, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(832, 448, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=448, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 448, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(448, 448, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(832, 448, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (7): UpSample(
+      (main): Conv2d(448, 448, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (8): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 832, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(832, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=384, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 384, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(384, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(832, 384, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (9): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 768, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(768, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=384, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 384, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(384, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(768, 384, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (10): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 704, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(704, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=384, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 384, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(384, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(704, 384, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (11): UpSample(
+      (main): Conv2d(384, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (12): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 704, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(704, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=320, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 320, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(704, 320, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (13): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 640, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(640, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=320, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 320, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(640, 320, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (14): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 576, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(576, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=320, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 320, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(576, 320, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (15): UpSample(
+      (main): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (16): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 576, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(576, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=256, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 256, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(576, 256, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (17): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 512, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(512, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=256, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 256, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(512, 256, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (18): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 448, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(448, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=256, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 256, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(448, 256, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (19): UpSample(
+      (main): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (20): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 448, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(448, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=192, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 192, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(448, 192, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (21): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 384, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(384, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=192, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 192, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(384, 192, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (22): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 320, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(320, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=192, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 192, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(320, 192, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (23): UpSample(
+      (main): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (24): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 320, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(320, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=128, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 128, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(320, 128, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (25): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 256, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(256, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=128, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 128, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(256, 128, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (26): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 192, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(192, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=128, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 128, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(192, 128, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (27): UpSample(
+      (main): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (28): ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 192, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=64, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 64, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(192, 64, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+    (29-30): 2 x ResBlock(
+      (block1): Sequential(
+        (0): GroupNorm(32, 128, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=64, bias=True)
+      )
+      (block2): Sequential(
+        (0): GroupNorm(32, 64, eps=1e-05, affine=True)
+        (1): Swish()
+        (2): Dropout(p=0.15, inplace=False)
+        (3): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (shortcut): Conv2d(128, 64, kernel_size=(1, 1), stride=(1, 1))
+      (attn): Identity()
+    )
+  )
+  (tail): Sequential(
+    (0): GroupNorm(32, 64, eps=1e-05, affine=True)
+    (1): Swish()
+    (2): Conv2d(64, 8, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  )
+  (patch_embed3): OverlapPatchEmbed(
+    (proj): Conv2d(512, 640, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+    (norm): LayerNorm((640,), eps=1e-05, elementwise_affine=True)
+  )
+  (patch_embed4): OverlapPatchEmbed(
+    (proj): Conv2d(640, 1024, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+    (norm): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+  )
+  (norm3): LayerNorm((640,), eps=1e-05, elementwise_affine=True)
+  (norm4): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+  (dnorm3): LayerNorm((640,), eps=1e-05, elementwise_affine=True)
+  (kan_block1): ModuleList(
+    (0): shiftedBlock(
+      (drop_path): Identity()
+      (norm2): LayerNorm((640,), eps=1e-05, elementwise_affine=True)
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=640, bias=True)
+      )
+      (kan): kan(
+        (fc1): KANLinear(
+          (base_activation): Swish()
+        )
+      )
+    )
+  )
+  (kan_block2): ModuleList(
+    (0): shiftedBlock(
+      (drop_path): Identity()
+      (norm2): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=1024, bias=True)
+      )
+      (kan): kan(
+        (fc1): KANLinear(
+          (base_activation): Swish()
+        )
+      )
+    )
+  )
+  (kan_dblock1): ModuleList(
+    (0): shiftedBlock(
+      (drop_path): Identity()
+      (norm2): LayerNorm((640,), eps=1e-05, elementwise_affine=True)
+      (temb_proj): Sequential(
+        (0): Swish()
+        (1): Linear(in_features=256, out_features=640, bias=True)
+      )
+      (kan): kan(
+        (fc1): KANLinear(
+          (base_activation): Swish()
+        )
+      )
+    )
+  )
+  (decoder1): D_SingleConv(
+    (conv): Sequential(
+      (0): GroupNorm(32, 1024, eps=1e-05, affine=True)
+      (1): Swish()
+      (2): Conv2d(1024, 640, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (temb_proj): Sequential(
+      (0): Swish()
+      (1): Linear(in_features=256, out_features=640, bias=True)
+    )
+  )
+  (decoder2): D_SingleConv(
+    (conv): Sequential(
+      (0): GroupNorm(32, 640, eps=1e-05, affine=True)
+      (1): Swish()
+      (2): Conv2d(640, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (temb_proj): Sequential(
+      (0): Swish()
+      (1): Linear(in_features=256, out_features=512, bias=True)
+    )
+  )
+)

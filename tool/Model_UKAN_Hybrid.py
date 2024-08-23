@@ -1,5 +1,7 @@
-
-   
+import sys
+import os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
 import math
 import torch
 from torch import nn
@@ -26,7 +28,7 @@ class OverlapPatchEmbed(nn.Module):
     """ Image to Patch Embedding
     """
 
-    def __init__(self, img_size=224, patch_size=7, stride=4, in_chans=3, embed_dim=768):
+    def __init__(self, img_size=224, patch_size=7, stride=4, in_chans=8, embed_dim=768):
         super().__init__()
         img_size = to_2tuple(img_size)
         patch_size = to_2tuple(patch_size)
@@ -421,7 +423,7 @@ class UKan_Hybrid(nn.Module):
         tdim = ch * 4#tdim是时间维度的维度
         self.time_embedding = TimeEmbedding(T, ch, tdim)
         attn = []
-        self.head = nn.Conv2d(8, ch, kernel_size=3, stride=1, padding=1)#这里是卷积层，输入通道数是3，输出通道数是ch，卷积核大小是3*3，步长是1，填充是1
+        self.head = nn.Conv2d(8, ch, kernel_size=3, stride=1, padding=1)#这里是卷积层，输入通道数是8，输出通道数是ch，卷积核大小是3*3，步长是1，填充是1
 
         self.downblocks = nn.ModuleList()
         chs = [ch]  # record hput channel when dowmsample for upsample
@@ -445,23 +447,29 @@ class UKan_Hybrid(nn.Module):
                 self.upblocks.append(ResBlock(
                     in_ch=chs.pop() + now_ch, h_ch=h_ch, tdim=tdim,
                     dropout=dropout, attn=(i in attn)))
-                now_ch = h_ch
+                now_ch = h_ch#h_ch是h的通道数，h是输入通道数，mult是倍数
             if i != 0:
                 self.upblocks.append(UpSample(now_ch))
         assert len(chs) == 0
 
         self.tail = nn.Sequential(
-            nn.GroupNorm(32, now_ch),
+            nn.GroupNorm(32, now_ch),#这里是归一化
             Swish(),
-            nn.Conv2d(now_ch, 3, 3, stride=1, padding=1)
-        )
+            nn.Conv2d(now_ch, 8, 3, stride=1, padding=1)
+        )#这里是尾部，输入通道数是now_ch，输出通道数是3，卷积核大小是3*3，步长是1，填充是1
 
         # 
-        embed_dims = [256, 320, 512]#这是嵌入维度
+        # embed_dims = [256, 320, 512]#这是嵌入维度
+        embed_dims = [512, 640, 1024]
         norm_layer = nn.LayerNorm#这是归一化层
         dpr = [0.0, 0.0, 0.0]
-        self.patch_embed3 = OverlapPatchEmbed(img_size=64 // 4, patch_size=3, stride=2, in_chans=embed_dims[0], embed_dim=embed_dims[1])
+
+        # self.patch_embed3 = nn.Conv2d(512, embed_dims[0], kernel_size=1, stride=1, padding=0)
+
+        self.patch_embed3 = OverlapPatchEmbed(img_size=64 // 4, patch_size=3, stride=2, in_chans=embed_dims[0], embed_dim=embed_dims[1])#patch_size是指patch的大小，stride是指步长，in_chans是指输入通道数，embed_dim是指嵌入维度
         self.patch_embed4 = OverlapPatchEmbed(img_size=64 // 8, patch_size=3, stride=2, in_chans=embed_dims[1], embed_dim=embed_dims[2])
+        
+        
 
         self.norm3 = norm_layer(embed_dims[1])
         self.norm4 = norm_layer(embed_dims[2])
@@ -500,12 +508,14 @@ class UKan_Hybrid(nn.Module):
         t3 = h
 
         B = x.shape[0]
-        h, H, W = self.patch_embed3(h)
- 
+        result = self.patch_embed3(h)
+        h, H, W = result[:3]
+        # h, H, W, _ = self.patch_embed3(h)#h
+
         for i, blk in enumerate(self.kan_block1):
             h = blk(h, H, W, temb)
-        h = self.norm3(h)
-        h = h.reshape(B, H, W, -1).permute(0, 3, 1, 2).contiguous()
+        h = self.norm3(h)#这里是归一化
+        h = h.reshape(B, H, W, -1).permute(0, 3, 1, 2).contiguous()#这里是reshape，将h的维度变为[B, H, W, -1]，然后转置为[B, -1, H, W]
         t4 = h
 
         h, H, W= self.patch_embed4(h)
@@ -522,7 +532,7 @@ class UKan_Hybrid(nn.Module):
         _, _, H, W = h.shape
         h = h.flatten(2).transpose(1,2)
         for i, blk in enumerate(self.kan_dblock1):
-            h = blk(h, H, W, temb)
+            h = blk(h, H, W, temb)#blk是shiftedBlock
 
             
         ### Stage 3
@@ -530,6 +540,7 @@ class UKan_Hybrid(nn.Module):
         h = h.reshape(B, H, W, -1).permute(0, 3, 1, 2).contiguous()
         h = swish(F.interpolate(self.decoder2(h, temb),scale_factor=(2,2),mode ='bilinear'))
 
+        h = F.interpolate(h, size=t3.shape[2:], mode='bilinear', align_corners=False)#插值
         h = torch.add(h,t3)
 
         # Upsampling
@@ -537,7 +548,7 @@ class UKan_Hybrid(nn.Module):
             if isinstance(layer, ResBlock):
                 h = torch.cat([h, hs.pop()], dim=1)
             h = layer(h, temb)
-        h = self.tail(h)
+        h = self.tail(h)#这里是尾部，
 
         assert len(hs) == 0
         return h
@@ -548,4 +559,5 @@ if __name__ == '__main__':
     model = UKan_Hybrid(
         T=1000, ch=64, ch_mult=[1, 2, 2, 2], attn=[],
         num_res_blocks=4, dropout=0.1)
+    print(model)
 

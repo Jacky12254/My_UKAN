@@ -14,6 +14,9 @@ from .Model_UKAN_Hybrid import UKan_Hybrid
 from .Scheduler import GradualWarmupScheduler
 from .Diffusion import GaussianDiffusionSampler, GaussianDiffusionTrainer
 from torchvision.utils import save_image
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

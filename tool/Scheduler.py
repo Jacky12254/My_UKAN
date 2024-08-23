@@ -1,5 +1,8 @@
 from torch.optim.lr_scheduler import _LRScheduler
-
+import sys
+import os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
 class GradualWarmupScheduler(_LRScheduler):
     def __init__(self, optimizer, multiplier, warm_epoch, after_scheduler=None):
         self.multiplier = multiplier

@@ -1,7 +1,10 @@
 import torch
 import torch.nn.functional as F
 import math
-
+import sys
+import os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
 
 class KANLinear(torch.nn.Module):
     def __init__(
