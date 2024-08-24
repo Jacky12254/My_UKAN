@@ -38,25 +38,25 @@ class GaussianDiffusionTrainer(nn.Module):#这个类是用来训练的
         self.register_buffer(
             'sqrt_one_minus_alphas_bar', torch.sqrt(1. - alphas_bar))
 
-    def forward(self, x_0):
+    def forward(self, x_0, real_image):
         """
         Algorithm 1.
         """
-        t = torch.randint(self.T, size=(x_0.shape[0], ), device=x_0.device)
-        noise = torch.randn_like(x_0)
-
-        noise_shape = noise.shape
+        t = torch.randint(self.T, size=(x_0.shape[0], ), device=x_0.device)#这里是生成一个随机数，用于计算t
+        # real_image = torch.randn_like(x_0)#这里是生成一个和x_0一样大小的随机数
+        real_image = real_image.to(x_0.device)
+        real_image_shape = real_image.shape
 
         x_t = (
             extract(self.sqrt_alphas_bar, t, x_0.shape) * x_0 +
-            extract(self.sqrt_one_minus_alphas_bar, t, x_0.shape) * noise)
+            extract(self.sqrt_one_minus_alphas_bar, t, x_0.shape) * real_image)#这里是计算x_t的值
         
         x_t_shape = x_t.shape
         t_shape = t.shape
         
         model_shape = self.model(x_t, t).shape
 
-        loss = F.mse_loss(self.model(x_t, t), noise, reduction='none')
+        loss = F.mse_loss(self.model(x_t, t), real_image, reduction='none')
         loss_add = loss.sum()
         return loss
 
@@ -104,12 +104,12 @@ class GaussianDiffusionSampler(nn.Module):#这个类是用来采样的
         for time_step in tqdm(reversed(range(self.T))):
             t = x_t.new_ones([x_T.shape[0], ], dtype=torch.long) * time_step
             mean, var= self.p_mean_variance(x_t=x_t, t=t)
-            # no noise when t == 0
+            # no real_image when t == 0
             if time_step > 0:
-                noise = torch.randn_like(x_t)
+                real_image = torch.randn_like(x_t)
             else:
-                noise = 0
-            x_t = mean + torch.sqrt(var) * noise
+                real_image = 0
+            x_t = mean + torch.sqrt(var) * real_image
             assert torch.isnan(x_t).int().sum() == 0, "nan in tensor."
         x_0 = x_t
         return torch.clip(x_0, -1, 1)   

@@ -23,6 +23,8 @@ import os
 from torchvision.transforms import ToTensor, Normalize, Compose
 from torch.utils.data import Dataset
 import sys
+import numpy as np
+from PIL import Image
 
 
 model_dict = {
@@ -34,23 +36,48 @@ model_dict = {
 }#这个字典是用来存储模型的，key是模型的名字，value是模型的类
 
 class UnlabeledDataset(Dataset):#这是一个数据集类，用于加载数据
-    def __init__(self, folder, transform=None, repeat_n=1):
+    def __init__(self, folder, loss_folder, transform=None, repeat_n=1):
         self.folder = folder
+        self.loss_folder = loss_folder
         self.transform = transform
         # self.image_files = os.listdir(folder) * repeat_n
         self.image_files = os.listdir(folder) 
+        self.loss_folder_files = os.listdir(loss_folder)
         self.image_files = [file for file in tqdm(self.image_files, desc="Loading Dataset")]
+        self.loss_folder_files = [file for file in tqdm(self.loss_folder_files, desc="Loading loss_Dataset")]
 
     def __len__(self):
         return len(self.image_files)
 
     def __getitem__(self, idx):
-        image_file = self.image_files[idx]
+        image_file = self.image_files[idx]#这里是获取图片的文件名
+        loss_file = self.loss_folder_files[idx]
         image_path = os.path.join(self.folder, image_file)
+        loss_path = os.path.join(self.loss_folder, loss_file)
         image = io.imread(image_path)
+        loss_image = io.imread(loss_path)
         if self.transform:
             image = self.transform(image)
-        return image, torch.Tensor([0])
+            
+            # if isinstance(loss_image, np.ndarray):
+            #     loss_image = Image.fromarray(loss_image)
+
+            loss_image = Image.fromarray(loss_image)#这里是将numpy数组转换为PIL图像
+            loss_image = loss_image.convert("L")  # 转换为单通道灰度图像
+            loss_image = np.array(loss_image)
+            loss_image = np.stack([loss_image] * 8, axis=-1)  # 复制到 8 个通道
+            # loss_image = Image.fromarray(loss_image, mode='L')  # 转换回 PIL 图像
+
+            # loss_transform = Compose([
+            #     # transforms.Grayscale(num_output_channels=8),  # 转换为8通道灰度图像
+            #     ToTensor(),
+            #     transforms.RandomHorizontalFlip(),#随机水平翻转
+            #     transforms.RandomVerticalFlip(),#随机垂直翻转
+            #     Normalize((0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), (0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5))#前一个参数是均值，后一个参数是标准差
+            #         ])
+            loss_image = self.transform(loss_image)
+
+        return image, torch.Tensor([0]), loss_image
 
 
 def train(modelConfig: Dict):
@@ -67,7 +94,7 @@ def train(modelConfig: Dict):
         ])#归一化，参数为均值和标准差
 
     if modelConfig["dataset"] == 'ROIs':
-        dataset = UnlabeledDataset('dataset/img_pro_dataset/', transform=transform, repeat_n=modelConfig["dataset_repeat"])
+        dataset = UnlabeledDataset('dataset/img_pro_dataset/', 'dataset/origin_dataset/opt_clear',transform=transform, repeat_n=modelConfig["dataset_repeat"])
         #这里是加载数据集，这里是加载的是ROIs数据集,repeate_n是指重复的次数
     else:
         raise ValueError('dataset not found')
@@ -102,12 +129,12 @@ def train(modelConfig: Dict):
     # start training
     for epoch in range(1,modelConfig["epoch"]+1):
         with tqdm(dataloader, dynamic_ncols=True) as tqdmDataLoader:
-            for images, labels in tqdmDataLoader:#这里是遍历数据集，images是图片，labels是标签，images的shape是[batch_size, 3, 64, 64]，image的来源是哪个变量？答案是dataset
+            for images, labels, real_image in tqdmDataLoader:#这里是遍历数据集，images是图片，labels是标签，images的shape是[batch_size, 3, 64, 64]，image的来源是哪个变量？答案是dataset
                 # train
                 optimizer.zero_grad()#梯度清零
                 x_0 = images.to(device)#将数据放到GPU上
                 
-                loss = trainer(x_0).sum() / 1000.#计算loss
+                loss = trainer(x_0, real_image).sum() / 1000.#计算loss
                 loss.backward()#反向传播
                 torch.nn.utils.clip_grad_norm_(
                     net_model.parameters(), modelConfig["grad_clip"])#梯度裁剪，这里使用的是梯度的L2范数，clip_grad_norm_是对梯度进行裁剪，作用是防止梯度爆炸

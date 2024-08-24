@@ -29,7 +29,6 @@ dataset_repeat  :  1
 seed  :  0
 save_root  :  ./model/
 output_root  :  ./output/
-Backend QtAgg is interactive backend. Turning interactive mode on.
 Using UKAN_Hybrid
 UKan_Hybrid(
   (time_embedding): TimeEmbedding(
