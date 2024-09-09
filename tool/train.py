@@ -150,7 +150,7 @@ def train(modelConfig: Dict):
                     print("epoch: ", epoch, "loss: ", loss.item(), "img shape: ", x_0.shape, "LR: ", optimizer.state_dict()['param_groups'][0]["lr"])
                 warmUpScheduler.step()#学习率调度器更新
                 torch.cuda.empty_cache()
-        if epoch % 50 ==0:
+        if epoch % 2 ==0:                                                                              #这里后面要改回50
             torch.save(net_model.state_dict(), os.path.join(
                 modelConfig["save_weight_dir"], 'ckpt_' + str(epoch) + "_.pt"))
             modelConfig['test_load_weight'] = 'ckpt_{}_.pt'.format(epoch)
@@ -162,7 +162,7 @@ def train(modelConfig: Dict):
         file.close()
         sys.stdout = sys.__stdout__#这里是关闭文件，恢复标准输出
     
-def eval_tmp(modelConfig: Dict, nme: int):#tmp是为了不覆盖原来的eval
+def eval_tmp(modelConfig: Dict, nme: int):#tmp是为了不覆盖原来的eval，nme是为了保存图片的时候加上后缀，整个函数一共会生成多少张图片？答案是32张。怎么看出是32张？答案是在main.py中，有一个循环，循环32次
     # load model and evaluate
     with torch.no_grad():
         device = torch.device(modelConfig["device"])
@@ -175,27 +175,31 @@ def eval_tmp(modelConfig: Dict, nme: int):#tmp是为了不覆盖原来的eval
         
         #以下这一段是为了在测试的时候生成图片
         print("model load weight done.")
-        model.eval()
-        sampler = GaussianDiffusionSampler(
-            model, modelConfig["beta_1"], modelConfig["beta_T"], modelConfig["T"]).to(device)
-        # Sampled from standard normal distribution
-        noisyImage = torch.randn(
-            size=[modelConfig["batch_size"], 3, modelConfig["img_size"], modelConfig["img_size"]], device=device)
-        # saveNoisy = torch.clamp(noisyImage * 0.5 + 0.5, 0, 1)
-        # save_image(saveNoisy, os.path.join(
-            # modelConfig["sampled_dir"], modelConfig["sampledNoisyImgName"]), nrow=modelConfig["nrow"])
-        sampledImgs = sampler(noisyImage)
-        sampledImgs = sampledImgs * 0.5 + 0.5  # [0 ~ 1]
+        for test in range(10):
+            model.eval()
+            sampler = GaussianDiffusionSampler(
+                model, modelConfig["beta_1"], modelConfig["beta_T"], modelConfig["T"]).to(device)
+            # Sampled from standard normal distribution
+            noisyImage = torch.randn(
+                size=[modelConfig["batch_size"], 8, modelConfig["img_size"], modelConfig["img_size"]], device=device)
+            # saveNoisy = torch.clamp(noisyImage * 0.5 + 0.5, 0, 1)
+            # save_image(saveNoisy, os.path.join(
+                # modelConfig["sampled_dir"], modelConfig["sampledNoisyImgName"]), nrow=modelConfig["nrow"])
+            sampledImgs = sampler(noisyImage)
+            sampledImgs = sampledImgs * 0.5 + 0.5  # [0 ~ 1]
 
-        save_root = modelConfig["sampled_dir"].replace('Gens','Tmp')
-        os.makedirs(save_root, exist_ok=True)
-        save_image(sampledImgs, os.path.join(
-            save_root,  modelConfig["sampledImgName"].replace('.png','_{}.png').format(nme)), nrow=modelConfig["nrow"])
-        if nme < 0.95 * modelConfig["epoch"]:
-            os.remove(os.path.join(
-                modelConfig["save_weight_dir"], modelConfig["test_load_weight"]))
-            
-        torch.cuda.empty_cache()
+            sampledImgs = sampledImgs.permute(0, 2, 3, 1)  # 调整维度顺序为 (批量大小, 高度, 宽度, 通道数)
+            sampledImgs = (sampledImgs * 255).clamp(0, 255).byte()  # 将数据类型转换为 uint8
+
+            save_root = modelConfig["sampled_dir"].replace('Gens','Tmp')
+            os.makedirs(save_root, exist_ok=True)
+            save_image(sampledImgs, os.path.join(
+                save_root,  modelConfig["sampledImgName"].replace('.png','_{}.png').format(nme)), nrow=modelConfig["nrow"])
+            if nme < 0.95 * modelConfig["epoch"]:
+                os.remove(os.path.join(
+                    modelConfig["save_weight_dir"], modelConfig["test_load_weight"]))
+                
+            torch.cuda.empty_cache()
 
 def eval(modelConfig: Dict):
     # load model and evaluate
@@ -215,12 +219,16 @@ def eval(modelConfig: Dict):
             model, modelConfig["beta_1"], modelConfig["beta_T"], modelConfig["T"]).to(device)
         # Sampled from standard normal distribution
         noisyImage = torch.randn(
-            size=[modelConfig["batch_size"], 3, modelConfig["img_size"], modelConfig["img_size"]], device=device)     
+            size=[modelConfig["batch_size"], 8, modelConfig["img_size"], modelConfig["img_size"]], device=device)     
         # saveNoisy = torch.clamp(noisyImage * 0.5 + 0.5, 0, 1)
         # save_image(saveNoisy, os.path.join(
-        #     modelConfig["sampled_dir"], modelConfig["sampledNoisyImgName"]), nrow=modelConfig["nrow"])
+        #     modelConfig["sampled_dir"], mo delConfig["sampledNoisyImgName"]), nrow=modelConfig["nrow"])
         sampledImgs = sampler(noisyImage)
         sampledImgs = sampledImgs * 0.5 + 0.5  # [0 ~ 1]
+
+        sampledImgs = sampledImgs.permute(0, 2, 3, 1)  # 调整维度顺序为 (批量大小, 高度, 宽度, 通道数)
+        sampledImgs = (sampledImgs * 255).clamp(0, 255).byte()  # 将数据类型转换为 uint8
+
 
         for i, image in enumerate(sampledImgs):
     
